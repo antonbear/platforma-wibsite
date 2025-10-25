@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Интерактивные карточки
     initCardSelection();
+
+    // Инициализация Яндекс.Карты
+    initYandexMap();
 });
 
 // Модальное окно
@@ -197,6 +200,42 @@ function initBookingButtons() {
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
+    });
+}
+
+// Инициализация Яндекс.Карты
+function initYandexMap() {
+    // Проверяем, загружен ли API Яндекс.Карт
+    if (typeof ymaps === 'undefined') {
+        console.log('Яндекс.Карты не загружены');
+        return;
+    }
+
+    ymaps.ready(function () {
+        // Точные координаты: Фестивальная улица, 23с2, Сергиев Посад
+        const coordinates = [56.292633, 38.165491];
+
+        const myMap = new ymaps.Map('yandex-map', {
+            center: coordinates,
+            zoom: 17,
+            controls: ['zoomControl', 'fullscreenControl']
+        });
+
+        // Добавляем метку на карту
+        const placemark = new ymaps.Placemark(coordinates, {
+            balloonContentHeader: '<strong>Платформа</strong>',
+            balloonContentBody: 'Фестивальная улица, 23с2<br>Сергиев Посад',
+            balloonContentFooter: 'Современное пространство для мероприятий',
+            hintContent: 'Платформа - пространство для ваших событий'
+        }, {
+            preset: 'islands#greenIcon',
+            iconColor: '#587C4A'
+        });
+
+        myMap.geoObjects.add(placemark);
+
+        // Отключаем прокрутку карты колесом мыши (чтобы не мешала прокрутке страницы)
+        myMap.behaviors.disable('scrollZoom');
     });
 }
 

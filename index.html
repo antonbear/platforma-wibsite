@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=e57656da-7a6b-43b7-91e2-6974e1e47f5f&lang=ru_RU" type="text/javascript"></script>
 </head>
 <body>
     <!-- Header -->
@@ -194,7 +195,7 @@
                 <div class="contact-info">
                     <div class="contact-item">
                         <h3>📍 Адрес</h3>
-                        <p>г. Сергиев Посад, Фестивальная улица</p>
+                        <p>г. Сергиев Посад, Фестивальная улица, 23с2</p>
                     </div>
                     <div class="contact-item">
                         <h3>📞 Телефон</h3>
@@ -210,9 +211,7 @@
                     </div>
                 </div>
                 <div class="contact-map">
-                    <div class="placeholder-img map-placeholder">
-                        <span>🗺️ Карта</span>
-                    </div>
+                    <div id="yandex-map" class="yandex-map"></div>
                 </div>
             </div>
         </div>
