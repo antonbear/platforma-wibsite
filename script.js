@@ -59,11 +59,60 @@ function initModal() {
 
     // Обработка отправки формы
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            alert('Спасибо! Мы свяжемся с вами в ближайшее время.');
-            closeModal();
-            form.reset();
+
+            // Получаем данные из формы
+            const name = form.querySelector('input[type="text"]').value;
+            const phone = form.querySelector('input[type="tel"]').value;
+
+            // Формируем данные для отправки
+            const data = {
+                phoneNumber: phone,
+                name: name
+            };
+
+            // Определяем URL API в зависимости от окружения
+            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const apiUrl = isLocalhost
+                ? 'http://localhost:8080/phones'  // Локальная разработка
+                : '/api/phones';  // Продакшен (через nginx proxy)
+
+            console.log('Отправка на:', apiUrl);
+
+            try {
+                // Отправляем POST запрос
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Успешная отправка
+                    const result = await response.json();
+                    console.log('Успешно отправлено:', result);
+                    alert('Спасибо! Мы вам перезвоним в ближайшее время.');
+                    closeModal();
+                    form.reset();
+                } else {
+                    // Ошибка от сервера
+                    console.error('Ошибка сервера:', response.status);
+                    alert('Произошла ошибка при отправке. Попробуйте позже или позвоните нам.');
+                }
+            } catch (error) {
+                // Ошибка сети или CORS
+                console.error('Ошибка:', error);
+
+                // Проверяем тип ошибки
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    alert('⚠️ CORS ошибка!\n\nНастройте CORS на backend сервере (localhost:8080).\n\nИли позвоните нам: +7 (999) 123-45-67');
+                } else {
+                    alert('Не удалось отправить запрос. Проверьте подключение к интернету или позвоните нам: +7 (999) 123-45-67');
+                }
+            }
         });
     }
 }
