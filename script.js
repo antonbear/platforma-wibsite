@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Обработчики кнопок бронирования
     initBookingButtons();
+
+    // Интерактивные карточки
+    initCardSelection();
 });
 
 // Модальное окно
@@ -169,3 +172,29 @@ function initScrollAnimations() {
 
 // Раскомментируйте для включения анимации при скролле
 // initScrollAnimations();
+
+// Интерактивные карточки с выделением при клике
+function initCardSelection() {
+    // Карточки преимуществ
+    const advantageCards = document.querySelectorAll('.advantage-card');
+    advantageCards.forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('selected');
+        });
+    });
+
+    // Карточки тарифов (только одна может быть выбрана)
+    const pricingCards = document.querySelectorAll('.pricing-card');
+    pricingCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            // Если клик был на кнопке, не обрабатываем выделение
+            if (e.target.tagName === 'BUTTON') return;
+
+            // Снимаем выделение со всех карточек
+            pricingCards.forEach(c => c.classList.remove('selected'));
+
+            // Выделяем текущую карточку
+            card.classList.add('selected');
+        });
+    });
+}
