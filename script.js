@@ -65,11 +65,13 @@ function initModal() {
             // Получаем данные из формы
             const name = form.querySelector('input[type="text"]').value;
             const phone = form.querySelector('input[type="tel"]').value;
+            const comment = form.querySelector('textarea').value;
 
             // Формируем данные для отправки
             const data = {
                 phoneNumber: phone,
-                name: name
+                name: name,
+                comment: comment || null  // Отправляем null если комментарий пустой
             };
 
             // Определяем URL API в зависимости от окружения
