@@ -1,0 +1,4 @@
+location /api/client-booking-requests {
+    proxy_pass http://localhost:8080/client-booking-requests;
+    # остальные настройки CORS
+}

@@ -21,12 +21,79 @@ document.addEventListener('DOMContentLoaded', () => {
     initYandexMap();
 });
 
+// Функция показа красивого уведомления
+function showNotification(title, message) {
+    const notification = document.getElementById('successNotification');
+    const titleElement = document.getElementById('notificationTitle');
+    const messageElement = document.getElementById('notificationMessage');
+    const okBtn = document.getElementById('notificationOkBtn');
+
+    titleElement.textContent = title;
+    messageElement.textContent = message;
+
+    notification.classList.add('show');
+
+    // Закрытие по кнопке ОК
+    const closeNotification = () => {
+        notification.classList.remove('show');
+        okBtn.removeEventListener('click', closeNotification);
+    };
+
+    okBtn.addEventListener('click', closeNotification);
+
+    // Автоматическое закрытие через 10 секунд (если пользователь не нажал ОК)
+    setTimeout(() => {
+        notification.classList.remove('show');
+        okBtn.removeEventListener('click', closeNotification);
+    }, 10000);
+}
+
 // Модальное окно
 function initModal() {
     const modal = document.getElementById('callbackModal');
     const callbackBtn = document.getElementById('callbackBtn');
     const closeBtn = document.querySelector('.modal-close');
     const form = document.getElementById('callbackForm');
+
+    // Форматирование телефона в форме обратного звонка
+    const callbackPhoneInput = form ? form.querySelector('input[type="tel"]') : null;
+    if (callbackPhoneInput) {
+        callbackPhoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+
+            if (value.startsWith('8')) {
+                value = '7' + value.slice(1);
+            }
+
+            if (!value.startsWith('7')) {
+                value = '7' + value;
+            }
+
+            value = value.slice(0, 11);
+
+            let formatted = '+7';
+            if (value.length > 1) {
+                formatted += ' (' + value.slice(1, 4);
+            }
+            if (value.length >= 5) {
+                formatted += ') ' + value.slice(4, 7);
+            }
+            if (value.length >= 8) {
+                formatted += '-' + value.slice(7, 9);
+            }
+            if (value.length >= 10) {
+                formatted += '-' + value.slice(9, 11);
+            }
+
+            e.target.value = formatted;
+        });
+
+        callbackPhoneInput.addEventListener('focus', function(e) {
+            if (!e.target.value) {
+                e.target.value = '+7 ';
+            }
+        });
+    }
 
     // Открытие модального окна
     if (callbackBtn) {
@@ -99,13 +166,13 @@ function initModal() {
                     // Успешная отправка
                     const result = await response.json();
                     console.log('Успешно отправлено:', result);
-                    alert('Спасибо! Мы вам перезвоним в ближайшее время.');
+                    showNotification('Спасибо!', 'Мы вам перезвоним в ближайшее время');
                     closeModal();
                     form.reset();
                 } else {
                     // Ошибка от сервера
                     console.error('Ошибка сервера:', response.status);
-                    alert('Произошла ошибка при отправке. Попробуйте позже или позвоните нам.');
+                    showNotification('Ошибка', 'Произошла ошибка при отправке. Попробуйте позже или позвоните нам');
                 }
             } catch (error) {
                 // Ошибка сети или CORS
@@ -113,9 +180,9 @@ function initModal() {
 
                 // Проверяем тип ошибки
                 if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                    alert('⚠️ CORS ошибка!\n\nНастройте CORS на backend сервере (localhost:8080).\n\nИли позвоните нам: +7 (999) 123-45-67');
+                    showNotification('Ошибка подключения', 'Не удалось связаться с сервером. Позвоните нам: +7 (999) 123-45-67');
                 } else {
-                    alert('Не удалось отправить запрос. Проверьте подключение к интернету или позвоните нам: +7 (999) 123-45-67');
+                    showNotification('Ошибка', 'Проверьте подключение к интернету или позвоните нам: +7 (999) 123-45-67');
                 }
             }
         });
@@ -184,12 +251,80 @@ function initBurgerMenu() {
 function initBookingButtons() {
     const bookBtn = document.getElementById('bookBtn');
     const pricingButtons = document.querySelectorAll('.pricing-card button');
-    const modal = document.getElementById('callbackModal');
+    const bookingModal = document.getElementById('bookingModal');
+    const bookingForm = document.getElementById('bookingForm');
+    const bookingCloseBtn = bookingModal.querySelector('.modal-close');
+
+    // Инициализация Flatpickr для красивого выбора даты
+    const dateInput = document.getElementById('desiredDate');
+    if (dateInput) {
+        flatpickr(dateInput, {
+            locale: "ru",
+            minDate: "today",
+            dateFormat: "d.m.Y",
+            disableMobile: true,
+            clickOpens: true,
+            allowInput: false,
+            theme: "material_green",
+            monthSelectorType: 'static',
+            onReady: function(selectedDates, dateStr, instance) {
+                console.log('Flatpickr готов');
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+                console.log('Выбрана дата:', dateStr);
+            }
+        });
+    }
+
+    // Форматирование телефонного номера
+    const phoneInput = document.getElementById('clientPhone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Убираем все нецифровые символы
+
+            // Если пользователь начал вводить с 8, заменяем на 7
+            if (value.startsWith('8')) {
+                value = '7' + value.slice(1);
+            }
+
+            // Если не начинается с 7, добавляем 7 в начало
+            if (!value.startsWith('7')) {
+                value = '7' + value;
+            }
+
+            // Ограничиваем длину (7 + 10 цифр)
+            value = value.slice(0, 11);
+
+            // Форматируем: +7 (999) 123-45-67
+            let formatted = '+7';
+            if (value.length > 1) {
+                formatted += ' (' + value.slice(1, 4);
+            }
+            if (value.length >= 5) {
+                formatted += ') ' + value.slice(4, 7);
+            }
+            if (value.length >= 8) {
+                formatted += '-' + value.slice(7, 9);
+            }
+            if (value.length >= 10) {
+                formatted += '-' + value.slice(9, 11);
+            }
+
+            e.target.value = formatted;
+        });
+
+        // При фокусе, если поле пустое, вставляем +7
+        phoneInput.addEventListener('focus', function(e) {
+            if (!e.target.value) {
+                e.target.value = '+7 ';
+            }
+        });
+    }
 
     // Кнопка в hero секции
     if (bookBtn) {
         bookBtn.addEventListener('click', () => {
-            modal.classList.add('active');
+            bookingModal.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
     }
@@ -197,10 +332,86 @@ function initBookingButtons() {
     // Кнопки в карточках тарифов
     pricingButtons.forEach(button => {
         button.addEventListener('click', () => {
-            modal.classList.add('active');
+            bookingModal.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
     });
+
+    // Закрытие модального окна бронирования
+    if (bookingCloseBtn) {
+        bookingCloseBtn.addEventListener('click', closeBookingModal);
+    }
+
+    bookingModal.addEventListener('click', (e) => {
+        if (e.target === bookingModal) {
+            closeBookingModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && bookingModal.classList.contains('active')) {
+            closeBookingModal();
+        }
+    });
+
+    function closeBookingModal() {
+        bookingModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Обработка отправки формы бронирования
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Получаем данные из формы
+            const desiredDate = document.getElementById('desiredDate').value;
+            const clientName = document.getElementById('clientName').value;
+            const clientPhone = document.getElementById('clientPhone').value;
+            const comment = document.getElementById('bookingComment').value;
+
+            // Формируем данные для отправки
+            const data = {
+                desiredDate: desiredDate,
+                clientName: clientName,
+                clientPhone: clientPhone,
+                comment: comment || null
+            };
+
+            // Определяем URL API
+            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const apiUrl = isLocalhost
+                ? 'http://localhost:8080/client-booking-requests'
+                : '/api/client-booking-requests';
+
+            console.log('Отправка заявки на бронирование:', apiUrl, data);
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Заявка успешно создана:', result);
+                    showNotification('Спасибо!', 'Ваша заявка принята. Мы свяжемся с вами в ближайшее время для подтверждения бронирования');
+                    closeBookingModal();
+                    bookingForm.reset();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Ошибка сервера:', response.status, errorData);
+                    showNotification('Ошибка', 'Произошла ошибка при отправке заявки. Попробуйте позже или позвоните нам');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка', 'Не удалось отправить заявку. Проверьте подключение или позвоните нам: +7 (999) 123-45-67');
+            }
+        });
+    }
 }
 
 // Инициализация Яндекс.Карты

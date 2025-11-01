@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_green.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
     <script src="https://api-maps.yandex.ru/2.1/?apikey=e57656da-7a6b-43b7-91e2-6974e1e47f5f&lang=ru_RU" type="text/javascript"></script>
 </head>
 <body>
@@ -246,18 +250,53 @@
         </div>
     </footer>
 
-    <!-- Modal -->
+    <!-- Modal - Callback -->
     <div id="callbackModal" class="modal">
         <div class="modal-content">
             <span class="modal-close">&times;</span>
             <h2>Заказать звонок</h2>
-            <form id="callbackForm" class="callback-form">
-                <input type="text" placeholder="Ваше имя" required>
-                <input type="tel" placeholder="Телефон" required>
-                <textarea placeholder="Комментарий"></textarea>
+            <form id="callbackForm" class="callback-form" autocomplete="off">
+                <input type="text" placeholder="Ваше имя" required autocomplete="off">
+                <input type="tel" placeholder="Телефон" required autocomplete="off">
+                <textarea placeholder="Комментарий" autocomplete="off"></textarea>
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="agreeToTermsCallback" required>
+                    <label for="agreeToTermsCallback">Я согласен на обработку персональных данных</label>
+                </div>
                 <button type="submit" class="btn-primary">Отправить</button>
             </form>
         </div>
+    </div>
+
+    <!-- Modal - Booking -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Забронировать пространство</h2>
+            <form id="bookingForm" class="callback-form" autocomplete="off">
+                <input type="text" id="desiredDate" placeholder="Желаемая дата" required autocomplete="off">
+                <input type="text" id="clientName" placeholder="Ваше имя" required autocomplete="off">
+                <input type="tel" id="clientPhone" placeholder="Телефон" required autocomplete="off">
+                <textarea id="bookingComment" placeholder="Комментарий (необязательно)" rows="3" autocomplete="off"></textarea>
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="agreeToTerms" required>
+                    <label for="agreeToTerms">Я согласен на обработку персональных данных</label>
+                </div>
+                <button type="submit" class="btn-primary">Отправить заявку</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div id="successNotification" class="notification">
+        <div class="notification-content">
+            <div class="notification-icon">✓</div>
+            <div class="notification-text">
+                <h3 id="notificationTitle">Спасибо!</h3>
+                <p id="notificationMessage">Ваша заявка принята</p>
+            </div>
+        </div>
+        <button class="notification-btn" id="notificationOkBtn">ОК</button>
     </div>
 
     <script src="script.js"></script>

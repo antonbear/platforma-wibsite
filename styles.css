@@ -734,6 +734,124 @@ body::after {
     min-height: 100px;
 }
 
+/* Чекбокс для согласия */
+.checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    width: auto;
+    min-width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--color-secondary);
+}
+
+.checkbox-wrapper label {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    cursor: pointer;
+    user-select: none;
+    line-height: 1.5;
+}
+
+/* Success Notification */
+.notification {
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 1.5rem 2rem;
+    z-index: 10000;
+    transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    min-width: 350px;
+    max-width: 90%;
+}
+
+.notification.show {
+    top: 2rem;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.notification-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--color-secondary) 0%, #43a047 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    flex-shrink: 0;
+    animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.notification-text h3 {
+    margin: 0 0 0.25rem 0;
+    color: var(--color-primary);
+    font-size: 1.25rem;
+    font-family: var(--font-heading);
+}
+
+.notification-text p {
+    margin: 0;
+    color: var(--color-text-light);
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.notification-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--color-secondary) 0%, #486C3A 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(88, 124, 74, 0.3);
+}
+
+.notification-btn:hover {
+    background: linear-gradient(135deg, #486C3A 0%, var(--color-secondary) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(88, 124, 74, 0.4);
+}
+
+.notification-btn:active {
+    transform: translateY(0);
+}
+
 /* Responsive Design */
 @media (max-width: 968px) {
     .container {
